@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Félicitations</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            animation: gradientBG 15s ease infinite;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            text-align: center;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem 4rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .player-name {
+            color: #fdbb2d;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .player-name::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: #fdbb2d;
+            animation: underline 1.5s forwards 1.5s;
+        }
+        
+        @keyframes underline {
+            to { width: 100%; }
+        }
+        
+        .message {
+            font-size: 1.8rem;
+            margin: 1.5rem 0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.8s forwards 1s;
+        }
+        
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle ease infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        .trophy {
+            font-size: 5rem;
+            margin: 1rem 0;
+            display: inline-block;
+            opacity: 0;
+            transform: scale(0.5);
+            animation: popIn 0.5s forwards 2s;
+        }
+        
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .score-container {
+            margin: 1.5rem 0;
+            opacity: 0;
+            animation: fadeIn 0.8s forwards 1.5s;
+        }
+        
+        .score-label {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .score-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #fdbb2d;
+            text-shadow: 0 0 10px rgba(253, 187, 45, 0.5);
+        }
+        
+        .button {
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.8rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.8s forwards 2.5s;
+        }
+        
+        .button:hover {
+            background: white;
+            color: #1a2a6c;
+            transform: scale(1.05);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    
+    <div class="container">
+        <h1>Félicitations !</h1>
+        <div class="player-name" id="playerName"></div>
+        <div class="trophy">🏆</div>
+        <p class="message">Tu as complété le jeu avec succès !</p>
+        
+        <div class="score-container">
+            <div class="score-label">Ton score final</div>
+            <div class="score-value" id="playerScore">0</div>
+        </div>
+        
+        <button class="button" onclick="window.location.href='index.html'">Retour à l'accueil</button>
+    </div>
+
+    <script>
+        // Récupérer le nom du joueur et le score depuis l'URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const playerName = urlParams.get('nom') || 'Joueur';
+            const playerScore = urlParams.get('score') || '0';
+            
+            document.getElementById('playerName').textContent = playerName;
+            document.getElementById('playerScore').textContent = playerScore;
+            
+            // Créer les étoiles
+            const stars = document.querySelector('.stars');
+            for (let i = 0; i < 100; i++) {
+                createStar(stars);
+            }
+            
+            // Lancer les confettis
+            createConfetti();
+        });
+        
+        function createStar(container) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            const size = Math.random() * 4 + 1;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const duration = Math.random() * 3 + 2;
+            const delay = Math.random() * 2;
+            
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${posX}%`;
+            star.style.top = `${posY}%`;
+            star.style.animationDuration = `${duration}s`;
+            star.style.animationDelay = `${delay}s`;
+            
+            container.appendChild(star);
+        }
+        
+        function createConfetti() {
+            const colors = ['#fdbb2d', '#b21f1f', '#1a2a6c', '#fff', '#ff00cc'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    
+                    const size = Math.random() * 10 + 5;
+                    const shape = Math.random() > 0.5 ? '50%' : '0';
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    confetti.style.backgroundColor = color;
+                    confetti.style.borderRadius = shape;
+                    confetti.style.left = `${Math.random() * 100}%`;
+                    confetti.style.top = '-20px';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Animation de chute
+                    const fallDuration = Math.random() * 3 + 2;
+                    const rotation = Math.random() * 360;
+                    const swingDistance = Math.random() * 50 - 25;
+                    
+                    confetti.animate([
+                        { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                        { transform: `translateY(${window.innerHeight}px) translateX(${swingDistance}px) rotate(${rotation}deg)`, opacity: 0 }
+                    ], {
+                        duration: fallDuration * 1000,
+                        easing: 'ease-in'
+                    }).onfinish = () => confetti.remove();
+                }, i * 100);
+            }
+        }
+    </script>
+</body>
+</html>
