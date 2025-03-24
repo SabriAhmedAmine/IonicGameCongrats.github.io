@@ -21,6 +21,12 @@
             animation: gradientBG 15s ease infinite;
         }
         
+        /* Support pour l'arabe */
+        body.ar {
+            direction: rtl;
+            font-family: 'Montserrat', sans-serif, 'Arial';
+        }
+        
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -181,24 +187,42 @@
     <div class="stars"></div>
     
     <div class="container">
-        <h1>Félicitations !</h1>
+        <h1 id="congratsTitle">Félicitations !</h1>
         <div class="player-name" id="playerName"></div>
         <div class="trophy">🏆</div>
-        <p class="message">Tu as complété le jeu avec succès !</p>
+        <p class="message" id="successMessage">Tu as complété le jeu avec succès !</p>
         
         <div class="score-container">
-            <div class="score-label">Ton score final</div>
+            <div class="score-label" id="scoreLabel">Ton score final</div>
             <div class="score-value" id="playerScore">0</div>
         </div>
         
     </div>
 
     <script>
-        // Récupérer le nom du joueur et le score depuis l'URL
+        // Dictionnaire de traduction
+        const translations = {
+            fr: {
+                congratsTitle: "Félicitations !",
+                successMessage: "Tu as complété le jeu avec succès !",
+                scoreLabel: "Ton score final"
+            },
+            ar: {
+                congratsTitle: "تهانينا!",
+                successMessage: "لقد أكملت اللعبة بنجاح!",
+                scoreLabel: "نتيجتك النهائية"
+            }
+        };
+        
+        // Récupérer le nom du joueur, le score et la langue depuis l'URL
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const playerName = urlParams.get('nom') || 'Joueur';
             const playerScore = urlParams.get('score') || '0';
+            const language = urlParams.get('langue') || 'fr';
+            
+            // Appliquer la langue
+            applyLanguage(language);
             
             document.getElementById('playerName').textContent = playerName;
             document.getElementById('playerScore').textContent = playerScore;
@@ -212,6 +236,26 @@
             // Lancer les confettis
             createConfetti();
         });
+        
+        function applyLanguage(lang) {
+            // Vérifier si la langue est supportée, sinon utiliser le français par défaut
+            const language = translations[lang] ? lang : 'fr';
+            
+            // Mettre à jour l'attribut lang de la balise html
+            document.documentElement.lang = language;
+            
+            // Appliquer la classe ar au body si la langue est l'arabe
+            if (language === 'ar') {
+                document.body.classList.add('ar');
+            } else {
+                document.body.classList.remove('ar');
+            }
+            
+            // Mettre à jour les textes
+            document.getElementById('congratsTitle').textContent = translations[language].congratsTitle;
+            document.getElementById('successMessage').textContent = translations[language].successMessage;
+            document.getElementById('scoreLabel').textContent = translations[language].scoreLabel;
+        }
         
         function createStar(container) {
             const star = document.createElement('div');
